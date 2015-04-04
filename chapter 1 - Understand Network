@@ -1,0 +1,25 @@
+chapter 1 - Understand Network
+
+- 3 basic concepts = Confidentially, Integrity and Availability
+
+- Risk management:
+  asset = anything that is valuable to an organization
+  vunerability = is an exploitable weakness in a system or its design
+  treat = any potencial danger to an asset (latent - vunerability exist but not yet realized
+                                            realized - attack already lauched to ur system and compromises yout security against an asset.
+                                            threat agent/vector - the entity that takes advantage of the vunerability.)
+  countermeasure = is a safeguard that somehow mitigates a potencial risk.
+
+
+ASSET - An asset is an item that is to be protected and can include property, people, and information/data that have value to the company. This includes intangible items such as proprietary information or trade secrets and the reputation of the company. The data could include company records, client information, proprietary software, and so on.
+
+VUNERABILITY - A vulnerability is an exploitable weakness of some type. That exploitation might result from a malicious attack, or it might be accidentally triggered because of a failure or weakness in the policy, implementation, or software running on the network.
+
+THREAT - This is what you are protecting against. A threat is anything that attempts to gain unauthorized access to, compromise, destroy, or damage an asset. Threats are often realized via an attack or exploit that takes advantage of an existing vulnerability.
+Threats today come in many varieties and spread more rapidly than ever before. Threats can also morph and be modified over time, and so you must be ever diligent to keep up with them.
+
+RISK - Risk is the potential for unauthorized access to, compromise, destruction, or damage to an asset. If a threat exists, but proper countermeasures and protections are in place (it is your goal to provide this protection), the potential for the threat to be successful is reduced (thus reducing the overall risk).
+
+COUNTERMEASURE - A countermeasure is a device or process (a safeguard) that is implemented to counteract a potential threat, which thus reduces risk.
+
+
