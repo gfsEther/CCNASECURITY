@@ -22,4 +22,71 @@ RISK - Risk is the potential for unauthorized access to, compromise, destruction
 
 COUNTERMEASURE - A countermeasure is a device or process (a safeguard) that is implemented to counteract a potential threat, which thus reduces risk.
 
+ASSET CLASSIFICATION:
+  Governmental classifications    Unclassified
+                                  Sensitive but unclassified (SBU)
+                                  Confidential
+                                  Secret
+                                  Top secret
+
+  Private sector classifications  Public
+                                  Sensitive
+                                  Private
+                                  Confidential
+                                  
+  Classification criteria         Value
+                                  Age
+                                  Replacement cost
+                                  Useful lifetime
+
+  Classification roles            Owner (the group ultimately responsible for the data, usually senior management of a company)
+                                  Custodian (the group responsible for implementing the policy as dictated by the owner)
+                                  User (those who access the data and abide by the rules of acceptable use for the data)
+
+VUNERABILITY CLASSIFICATION:
+  Policy flaws
+  Design errors
+  Protocol weaknesses
+  Misconfiguration
+  Software vulnerabilities
+  Human factors
+  Malicious software
+  Hardware vulnerabilities
+  Physical access to network resources
+
+Dictionaty of known vunerabilities:
+  Common Vulnerabilities and Exposures (CVE)
+  National Vulnerability Database (NVD)
+
+COUNTERMEASURE CLASSIFICATION:
+  Administrative - These consist of written policies, procedures, guidelines, and standards. An example would be a written acceptable use policy (AUP), agreed to by each user on the network. Another example is a change control process that needs to be followed when making changes to the network. Administrative controls could involve items such as background checks for users, as well.
+
+  Physical - Physical controls are exactly what they sound like, physical security
+  for the network servers, equipment, and infrastructure. An example is providing a locked door between users and the wiring closet on any floor (where the switches and other gear exists). Another example of a physical control is a redundant system (for instance, an uninterruptible power supply).
+
+  Logical - Logical controls include passwords, firewalls, intrusion prevention systems, access lists, VPN tunnels, and so on. Logical controls are often referred to as technical controls.
+
+POTENCIAL ATTACKERS:
+  Terrorists
+  Criminals
+  Government agencies
+  Nation-states
+  Hackers
+  Disgruntled employees
+  Competitors
+  Anyone with access to a computing device (sad, but true)
+
+ATTACK METHODS
+  Reconnaissance - This is the discovery process used to find information about the network. It could include scans of the network to find out which IP addresses respond, and further scans to see which ports are open. This is usually the first step taken, to discover what is on the network and to determine potential vulnerabilities.
+
+  Social engineering - This is a tough one because it leverages our weakest (very likely) vulnerability in a secure network: the user. If the attacker can get the user to reveal information, it is much easier for the attacker than using some other method of reconnaissance. This could be done through email or misdirection of web pages, which results in the user clicking something that leads to the attacker gaining information. Social engineering can also be done in person or over the phone.
+    Phishing presents a link that looks like a valid trusted resource to a user. When the user clicks it, the user is prompted to disclose confidential information such as usernames/passwords.
+    Pharming is used to direct a customer’s URL from a valid resource to a malicious one that could be made to appear as the valid site to the user. From there, an attempt is made to extract confidential information from the user.
+
+  Privilege escalation - This is the process of taking some level of access (whether authorized or not) and achieving an even greater level of access. An example is an attacker who gains user mode access to a router and then uses a brute- force attack against the router, determining what the enable secret is for privilege level 15 access.
+
+  Back doors - When attackers gain access to a system, they usually want future access, as well, and they want it to be easy. A backdoor application can be installed to either allow future access or to collect information to use in further attacks.
+  Many back doors are installed by users clicking something without realizing the link they click or the file they open is a threat. Back doors can also be implemented as a result of a virus or a worm (often referred to as malware).
+
+  
 
