@@ -88,5 +88,264 @@ ATTACK METHODS
   Back doors - When attackers gain access to a system, they usually want future access, as well, and they want it to be easy. A backdoor application can be installed to either allow future access or to collect information to use in further attacks.
   Many back doors are installed by users clicking something without realizing the link they click or the file they open is a threat. Back doors can also be implemented as a result of a virus or a worm (often referred to as malware).
 
-  
+GUIDELINE TO NETWORK SECURITY
+  Rule of least privilege - This rule states that minimal access is only provided to the required network resources, and not any more than that. An example of this is an access list applied to an interface for filtering that says deny all. Before this, specific entries could be added allowing only the bare minimum of required protocols, and only then between the correct source and destination addresses.
+
+  Defense in depth - This concept suggests that you have security implemented on
+  nearly every point of your network. An example is filtering at a perimeter router, filtering again at a firewall, using IPSs to analyze traffic before it reaches your servers, and using host-based security precautions at the servers, as well. This is defense in depth. Using authentication and authorization mechanisms could also be part of a defense-in-depth approach.
+  The concept behind defense in depth is that if a single system fails, it does not mean that security has completely been removed from the equation. 
+
+  Separation of duties - By placing specific individuals into specific roles, there can be checks and balances in place regarding the implementation of the security policy. Rotating individuals into different roles periodically will also assist in verifying that vulnerabilities are being addressed, because a person who moves into a new role will be required to review the policies in place.
+
+  Auditing - This refers to accounting and keeping records about what is occurring on the network. Most of this can be automated through the features of authentication, authorization, and accounting (AAA) (covered later in this book). When events happen on the network, the records of those events can be sent to an accounting server. When the separation-of-duties approach is used, those who are making changes on the network should not have direct access to modify or delete the accounting records that are kept on the accounting server.
+
+SECURITY NETWORK LIFECYCLE
+  Initiation -  This involves preliminary risk assessments and categorizing of risk, such as with labels of low, medium, or high. These assessments and labels can assist you in prioritizing security measures by focusing on the high-risk items first.
+
+  Acquisition and development - This involves a more detailed risk assessment, acquiring the products and tools needed to implement the countermeasures needed to reduce risk, and testing those countermeasures (usually on a closed network or as a pilot program) to verify their correct implementation.
+
+  Implementation - This is the actual point where the rubber meets the road, where you put the countermeasures in place on the production network.
+
+  Operations and maintenance - This involves monitoring and with the care and feeding of our network security devices (and incident handling when issues arise).
+
+  Disposition - All things come to an end, and disposing of network gear (including sanitizing/formatting/destroying media storage devices) is part of this.
+
+DETERMINE THE IMPACT OF A RISK
+  Qualitative - In this method, the data is gathered by an individual, who likely is a subject matter expert (in this case as to the asset’s value, its vulnerabilities, potential threats, and the impact or risk based on those factors).
+
+  Quantitative - In this method, you use raw data, numbers, and statistics to determine the risk.
+
+ASSET TO BE CONSIDERED
+  Value of the asset
+  Vulnerabilities
+  Potential threats
+  Compliance issues
+  Business requirements
+
+CALCULATE THE RISK:
+  Using qualitative/quantitative approaches, identify the risk (value of asset, vulnerability, potential threats = risk).
+
+  Take action regarding the risk (which could include transferring the risk, accepting the risk, or reducing the risk using countermeasures).
+
+  Monitor the risk. This includes verification that the countermeasures are reducing the risk and making adjustments regarding that risk if it is increasing or decreasing based on changes in the network, changes in access to data, or changes based on new types of threats.
+
+TYPE OF POLICY
+  Guideline policies - These include AUPs, audit policies, password policies, risk assessment policies, web server policies, and so on.
+
+  Email policies - These include email-forwarding policies, spam policies, and so on.
+
+  Remote-access policies - These include virtual private network (VPN) remote access, dial-in access, and minimum requirements for remote access with regard to virus scanning or patches.
+
+  Telephony policy - This includes guidance about the acceptable use of telephony services related to voice/data over that media.
+
+  Application policies - These include minimum security requirements that need to be included in new applications that are added to the network and restrictions about what end users are allowed to install and or run on their local computers.
+
+  Network policies - These include standards for access via wireless or wired connections, and could include minimum requirements for the PCs that are connecting, such as minimum service packs, specific antivirus properties (such as current antivirus that has been updated in the past 4 days), and other network-related activity.
+
+TOOL TO USE AS TEST
+  Network scanning
+  Vulnerability scanning
+  Password cracking
+  Penetration testing
+  Social engineering attempts
+
+incident - means an event on the network that has negative impact (risk involved).
+
+BORDERLESS NETWORK COMPONENTS
+
+  Borderless end zone - This is where devices connect to the network. It is here that we are concerned with viruses, malware, and other malicious software. Using techniques such as Network Admissions Control (NAC) and Identity Services Engine (ISE), we can properly interrogate devices before they are allowed onto the network to verify they meet certain minimum requirements (installations of virus scanning tools, service packs, patch revision levels, and so on).
+
+  Borderless data center - This represents a cloud-driven business environment that could provide services. It is in this borderless data center where we implement firewalls such as the Adaptive Security Appliance (ASA) and intrusion prevention systems (IPS) to protect network resources there. Virtual tools can also be used inside virtual environments in the data center, such as virtual switches that can enforce policy on virtual devices that are connected to that virtual switch.
+
+  Borderless Internet - This represents the biggest IP network on the planet, which we are all familiar with. Service providers and other individuals connected to the Internet use various techniques for security, including IPSs, firewalls, and protocol inspection (all the way from Layer 2 to Layer 7 of the OSI model).
+
+  Policy management point - In a perfect environment, we would have a single point of control
+  that could implement appropriate security measures across the entire network. Cisco Security Manager (CSM) is an example of one of these enterprise tools. Another example is Cisco Access Control Server (ACS), which provides contextual access. For example, if you want to allow administrators full access to a router only if they are logging in from a specific location, you could enforce that with ACS and authentication, authorization, accounting (AAA) rules. Under that same system, administrators could also potentially gain access from other locations.
+
+  Context awareness - This just what is sounds like: being aware of context. For example, you might want to confirm a basic set of parameters (who users are, how they are accessing a network, the condition of the computer they are using to access the network, and so on) before giving users access. Actual tools to implement this include ISE, NAC, and AAA.
+
+SECUREX
+  Context awareness - This just what is sounds like: being aware of context. For example, you might want to confirm a basic set of parameters (who users are, how they are accessing a network, the condition of the computer they are using to access the network, and so on) before giving users access. Actual tools to implement this include ISE, NAC, and AAA.
+
+  AnyConnect Client - With AnyConnect Client, you can establish Secure Sockets Layer (SSL) or IPsec VPNs for clients. VPNs provide for confidentiality of the data in motion and the integrity of that data.
+
+  TrustSec - This creates a distributed access policy enforcement mechanism, and can also use encryption to provide confidentiality. The intent is to provide and control end-to-end security, based on who, what, where, and how users are connected to the network. Endpoint systems are analyzed to verify they meet corporate security requirements. Actual tools to implement this include ISE, NAC, and AAA. If security group tags (SGT) are used, devices involved in forwarding the traffic can implement the appropriate security based on the tag. Data can be encrypted for confidentiality, as well.
+
+  Security Intelligence Operations - Security Intelligence Operations (SIO) is a cloud-based service that Cisco manages. This service identifies and correlates realtime threats so that customers can leverage this information to better protect their networks. An example is learning about an attack that is propagating through the Internet before it reaches your network, thus enabling you to place additional security measures in preparation for its arrival at your perimeter.
+
+CONTROLLING AND CONTAINING DATA LOSS
+  ASA firewalls: The Cisco ASA provides packet filtering, stateful filtering (all cov- ered in the firewall section), support for IPsec remote-access and IPsec site-to-site VPNs, and VPN support for SSL remote-access users. An additional module can provide intrusion prevention services, as well.
+
+  Integrated Services Routers (ISR): Building on the routing infrastructure, you can integrate additional security into the router itself using features such as zonebased firewalls and IPSs (in software or IPS modules installed through an available option slot in the chassis). Routers support VPNs, authenticated routing protocols, packet filtering, and a wide variety of other security features.
+
+  Intrusion prevention systems (IPS): An IPS is implemented as a standalone appliance, or you can implement it as a module that goes into a Cisco ASA firewall or router. In addition, you can place a blade module in a 6500 series switch. An IPS, using primarily signature matching, can identify malicious traffic and prevent attacks from being forwarded into the network.
+
+  IronPort Email Security Appliances and IronPort Web Security Appliances (WSA): These appliances provide granular control of email and, in the case of web traffic and WSA, can track thousands of applications and enforce security policies to protect networks against threats.
+
+  ScanSafe: ScanSafe web security can dynamically categorize search engine results to prevent access to undesired sites or content, and can also look for malicious content, thus offering protection for zero-day attacks that have not been identified through traditional IPS signatures.
+
+NETWORK FOUNDATION PROTECTION
+  Management plane: This includes the protocols and traffic that an administrator uses between his workstation and the router or switch itself. An example is using a remote management protocol such as Secure Shell (SSH) to monitor or configure the router or switch. The management plane is listed here first because until the device is configured (which occurs in the management plane), the device will not be too functional in a network. If a failure occurs in the management plane, it may result in losing the ability to manage a network device.
+
+  Control plane: This includes protocols and traffic that the network devices use on their own without direct interaction from an administrator. An example is a routing protocol. A routing protocol can dynamically learn and share routing information that the router can then use to maintain an updated routing table. If a failure occurs in the control plane, a router may lose the ability to share or correctly learn dynamic routing information, and as a result not have the routing intelligence to be able to route for the network.
+
+  Data plane: This includes traffic that is being forwarded through the network (sometimes called transit traffic). An example is a user on one part of the network who is accessing a server; the data plane represents the traffic that is either being switched or forwarded by the network devices between the client and server. A failure of some component in the data plane results in the customer’s traffic not being able to be forwarded. Other times, based on policy, you might want to deny specific types of traffic on the data plane.
+
+CONTROL PLANE
+  CoPP - Control plane policing. You can configure this as a filter for any traffic destined to an IP address on the router itself. For example, you can specify that management traffic, such as SSH/HTTPS/SSL and so on,
+  can be rate-limited (policed) down to a specific level. This way, if an attack occurs that involves an excessive amount of this traffic, the excess traffic above the threshold set could simply be ignored and not have
+  to be processed directly by the CPU. Another way to think of this is as applying quality of service (QoS) to the valid management traffic and policing to the bogus management traffic.
+  This is applied to a logical control plane interface (not directly to any Layer 3 interface) so that the policy can be applied globally to the router.
+
+  CPPr - Control plane protection. This allows for a more detailed classification of traffic (more than CoPP) that is going to use the CPU for handling. The three specific subcategories that can be classified are traffic to one of the physical or logical interfaces of the router, certain data plane traffic that requires CPU intervention before forwarding (such as IP options), and Cisco Express Forwarding (CEF) exceptions (traffic related to network operations, such as keepalives or packets with Time-To-Live (TTL) mechanisms that are expiring) that have to involve the CPU.
+  The benefit of CPPr is that you can rate-limit and filter this type of traffic with a more fine-toothed comb than CoPP.
+  This is also applied to a logical control plane interface, so that regardless of the logical or physical interface the packets come in on, the router processor can still have the protection.
+
+CCP CONFIGURATION
+  R1(config)# ip http server
+  R1(config)# ip http secure-server
+  R1(config)# username admin privilege 15 secret cisco
+  R1(config)# ip http authentication local
+
+  Community - is a group of routers that share something in common. Each community can contain a maximum of 10 devices.
+
+  One-Step Lockdown
+    Disable Finger Service: Finger is used to find out which users are logged in to a network device. Although this information is not usually tremendously sensitive, it can sometimes be useful to an attacker.
+
+    Disable TCP and UDP Small Servers Service: By default, older IOS enables the “small services”: echo, chargen, and discard. (Small services are disabled by default in the current IOS. These services are rarely used for legitimate purposes, but they can be used to launch denial-of-service [DoS] and other attacks.)
+
+    Disable IP BOOTP Server Service: BOOTP allows both routers and computers to automatically configure from a centrally maintained server upon startup, including downloading Cisco IOS software. As a result, BOOTP can potentially be used by an attacker to download a copy of a router’s Cisco IOS software. This service is also vulnerable to DoS attacks, which could affect the router overall.
+
+    Disable IP Identification Service: Identification support allows you to query a TCP port for identification. It is potentially dangerous to allow any system on a directly connected segment to learn that the router is a Cisco device and to determine the model number and the Cisco IOS software version being run. This information may be used to design attacks against the router.
+
+    Disable CDP: This is dangerous in that it allows any system on a directly connected segment to learn that the router is a Cisco device and to determine the model number and the Cisco IOS software version being run. This information may be used to design attacks against the router.
+
+    Disable IP Source Route: The IP protocol supports source routing options that allow the sender of an IP datagram to control the route that the datagram takes toward its ultimate destination, and generally the route that any reply takes. These options are rarely used for legitimate purposes in networks. Allowing the sender of a packet to control the path through your network is not a good idea.
+
+    Enable Password Encryption Service: Providing a light encryption of a plaintext password prevents an individual who may be glancing at the configuration from being able to know what the actual plaintext password is.
+
+    Enable TCP Keepalives for Inbound and Outbound Telnet Sessions: Enabling TCP keepalives causes the router to generate periodic keepalive messages, letting it detect and drop broken Telnet connections, and not leaving them open for potential unauthorized access.
+
+    Enable IP CEF: Routes configured for Cisco Express Forwarding (CEF) perform better under SYN attacks than routers using the traditional cache.
+
+    Disable IP Gratuitous ARPs: A gratuitous Address Resolution Protocol (ARP) is an ARP broadcast in which the source and destination IP addresses are the same. It is used primarily by a host to inform the network about its IP address. Gratuitous means that an ARP reply is sent without an initial request from another station. A spoofed gratuitous ARP message can cause network mapping information to be stored incorrectly, or the wrong devices to be used, causing network malfunctions.
+
+    Set Minimum Password Length to More Than 6 Characters: One method attackers use to crack passwords is to try all possible combinations of characters until the password is discovered. Longer passwords have exponentially more possible combinations of characters, making this method of attack much more difficult.
+
+    Set Authentication Failure Rate to Less Than 3 Retries: One method of cracking passwords, called the “dictionary” attack, is to use software that attempts to log in using every word in a dictionary. This configuration causes access to the router to be locked for a period of 15 seconds after three unsuccessful login attempts, disabling the dictionary method of attack. In addition to locking access to the router, this configuration causes a log message to be generated after three unsuccessful login attempts, warning the administrator of the unsuccessful login attempts.
+
+    Set TCP SYN-Wait Time to 10 Seconds: A SYN-flood attack sends repeated connection requests to a host, but never sends the acceptance of acknowledgments that complete the connections, creating increasingly more incomplete connections at the host. This can overwhelm and disable the host. Setting the TCP SYN-Wait time to 10 seconds causes the router to shut down an incomplete connection after 10 seconds, preventing the buildup of incomplete connections at the host.
+
+    Set Banner: This is to provide a banner informing unauthorized users that their use is in fact unauthorized.
+
+    Enable Logging: Because it gives detailed information about network events, logging is critical in recognizing and responding to security events.
+
+    Set Enable Secret Password: The enable secret command is used to set the password that grants privileged administrative access to the Cisco IOS system.
+
+    Disable SNMP: Version 1 of the Simple Network Management Protocol (SNMP) is the most commonly used and is often a security risk because it uses authentication strings (passwords) called community strings that are stored and sent across the network in plain text. It is an easy-to-spoof protocol. SNMP is a valid protocol to run on your network to properly manage it, but it is considered a more advanced topic at this point because you should take extra precautions to secure the protocol and properly manage a network. For now, disabling it is the safest option (until you can revisit it later).
+
+    Set Scheduler Interval: When a router is fast-switching a large number of packets, it is possible for the router to spend so much time responding to interrupts from the network interfaces that no other work gets done. Some very fast packet floods can cause this condition. It may stop administrative access to the router, which is dangerous when the device is under attack. Tuning the scheduler interval ensures that management access to the router is always available by causing the router to run system processes after the specified time interval, even when CPU usage is at 100 percent.
+
+    Set Scheduler Allocate: On routers that do not support the command scheduler interval, Security Audit configures the scheduler allocate command whenever possible.
+
+    Set Users: Security Audit secures the console, AUX, vty, and tty lines by configuring Telnet user accounts to authenticate access to these lines whenever possible. Security Audit displays a dialog box in which you can define user accounts and passwords for these lines.
+
+    Enable Telnet Settings: Security Audit secures the console, AUX, vty, and tty lines by implementing the transport input and transport output commands to define which protocols can be used to connect to those lines. It also sets the exec-timeout value to ten minutes on the console and AUX lines, causing an administrative user to be logged out from these lines after ten minutes of no activity.
+
+    Disable IP Redirects: ICMP supports IP traffic by relaying information about paths, routes, and network conditions. ICMP redirect messages instruct an end node to use a specific router as its path to a particular destination. In a properly functioning IP network, a router sends redirects only to hosts on its own local subnets; no end node ever sends a redirect, and no redirect ever traverses more than one network hop. However, an attacker may violate these rules; some attacks are based on this. Disabling ICMP redirects causes no operational impact to the network, and it eliminates this possible method of attack.
+
+    Disable IP Proxy ARP: ARP is used by the network to convert IP addresses into MAC addresses. Normally, ARP is confined to a single LAN, but a router can act as a proxy for ARP requests, making ARP queries available across multiple LAN segments. Because it breaks the LAN security barrier, you should use proxy ARP only between two LANs with an equal security level, and only when necessary.
+
+    Disable IP Directed Broadcast: An IP directed broadcast is a datagram that is sent to the broadcast address of a subnet to which the sending machine is not directly attached. The directed broadcast is routed through the network as a unicast packet until it arrives at the target subnet, where it is converted into a link-layer broadcast. By sending a continuous stream of request packets, using a spoofed source address, the attacker can create a much larger stream of replies, which can completely inundate the host whose address is being falsified.
+
+    Disable MOP Service: Maintenance Operations Protocol (MOP) is used to provide configuration information to the router when communicating with DECnet networks. MOP is vulnerable to various attacks, and it is unlikely that anyone is running DECnet any longer.
+
+    Disable IP Unreachables: ICMP supports IP traffic by relaying information about paths, routes, and network conditions. ICMP host unreachable messages are sent out if a router receives a nonbroadcast packet that uses an unknown protocol, or if the router receives a packet that it is unable to deliver to the ultimate destination because it knows of no route to the destination address. These messages can be used by an attacker to gain network mapping information.
+
+    Disable IP Mask Reply: ICMP mask reply messages are sent to the device requesting the information by devices that have the requested information. An attacker can use these to gain network mapping information.
+
+    Enable Unicast RPF on Outside Interfaces: Reverse Path Forwarding (RPF) causes the router to check the source address of any packet against the interface through which the packet entered the router. If the input interface is not a feasible path to the source address according to the routing table, the packet is dropped. This source address verification is used to defeat IP spoofing.
+
+    Enable Firewall on All of the Outside Interfaces: The IOS firewall filters packets and performs session tracking, based on application layer information, such as the type of session such as HTTP or DNS requests. Traffic specified by the firewall policy is allowed to flow through the firewall.
+
+    Set Access Class on HTTP Server Service and vty Lines: Security Audit limits access to the HTTP service and vty lines by configuring an access class that permits access only from directly connected network nodes.
+
+    Enable SSH for Access to the Router: Secure Shell (SSH) is the preferred secure method for remote-access command-line access to the router because the session is encrypted.
+
+    Enable AAA: Cisco IOS Authentication, Authorization, and Accounting (AAA) service provides a modular way of performing authentication, authorization, and accounting services. Authentication using the running configuration (a user that is in the running configuration) is required for HTTP, console, and vty access to the router.
+
+MANAGEMENT PLANE BEST PRATICE
+  Strong passwords: Make passwords very difficult to break. 
+
+  User authentication and AAA: Require administrators to authenticate using usernames and passwords. 
+
+  Role-based access control (RBAC): Not every administrator needs full access to every device, and you can control this through AAA and custom privilege levels/ parser views. 
+
+  Encrypted management protocols: When using either in-band or out-of-band management, encrypted communications should be used, such as Secure Shell (SSH) or Hypertext Transfer Protocol Secure (HTTPS). Out-of-band (OOB) management implies that there is a completely separate network just for management protocols and a different network for end users and their traffic. In-band management is when the packets used by your management protocols may intermingle with the user packets (considered less secure than OOB). 
+
+  Logging: Logging is a way to create an audit trail. 
+
+  Network Time Protocol (NTP): Use NTP to synchronize the clocks on network devices so that any logging that includes time stamps may be easily correlated. Preferably, use NTP Version 3, to leverage its ability to provide authentication for time updates. This becomes very important to correlate logs between devices in case there is ever a breach and you need to reconstruct (or prove in a court of law) what occurred.
+
+  Secure system files: Make it difficult to delete, whether accidentally or on purpose, the startup configuration files and the IOS images that are on the file systems of the local routers and switches. You can do so by using built-in IOS features discussed later in this chapter.
+
+AAA configuration
+  R1(config)# aaa new-model
+  R1(config)# tacacs-server host 50.50.4.101
+  R1(config)# tacacs-server key ToUgHPaSsW0rD-1#7
+  R1(config)# aaa authentication login default local enable (locally)
+  R1(config)# aaa authentication login MY-LIST-1 group tacacs local enable
+  R1(config)# aaa authorization commands 1 TAC1 group tacacs+ local (for commands at level 1 - privilege level 1)
+  R1(config)# aaa authorization commands 15 TAC15 group tacacs+ local (for commands at level 15 - privilege exec mode)
+  R1(config)# aaa accounting commands 1 TAC-act1 start-stop group tacacs+ R1(config)# aaa accounting commands 15 TAC-act15 start-stop group tacacs+
+  R1(config)# username admin privilege 15 secret 4Je7*1swEsf (in case the ACS couldnt be reached)
+  R1(config)# line vty 0 4
+  R1(config-line)# login authentication MY-LIST-1
+  R1(config-line)# authorization commands 1 TAC1
+  R1(config-line)# authorization commands 15 TAC15
+  R1(config-line)# accounting commands 1 TAC-act1
+  R1(config-line)# accounting commands 15 TAC-act15
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
