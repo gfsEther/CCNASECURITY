@@ -306,14 +306,545 @@ AAA configuration
   R1(config-line)# accounting commands 1 TAC-act1
   R1(config-line)# accounting commands 15 TAC-act15
 
+Custom Privilege Level (config)
+  R2(config)# privilege exec level 8 configure terminal
+  R2(config)# enable secret level 8 0 NewPa5s123& (The "0" before the password, implies that we are inputting a non-hashed ! (to begin with) password)
+  R2(config)# end
 
+Parser View (config)
+  R2(config)# enable secret aBc!2#&iU 
+  R2(config)# aaa new-model 
+  R2(config)# end
+  R2# enable view
+  R2# configure terminal
+  R2(config)# parser view New_VIEW
+  R2(config-view)# secret New_VIEW_PW
+  R2(config-view)# commands exec include ping (commands "exec" refer to commands issued from the command prompt)
+  R2(config-view)# commands exec include all show
+  R2(config-view)# commands exec include configure
+  R2(config-view)# commands configure include access-list (commands "configure" refer to commands issued from privileged mode)
+  R2(config-view)# exit
+  R2# disable (to get in the new view)
+  R2>enable view New_VIEW
+  R2# show parser view (This command reports what view we are currently using)
+  R2(config)# username Lois view New_VIEW secret cisco123 (automatically place users into their view) ps:This creation of a username and assigning that user to a view needs to be done by someone who is at privilege level 15.
 
+SSH (config)
+  Router(config)# hostname R1
+  R1(config)# ip domain-name cisco.com  
+  R1(config)# crypto key generate rsa
+  R1(config)# username Keith secret Ci#kRk*ks
+  R1(config)# line vty 0 4
+  R1(config-line)# login local
+    or
+  R1(config)# aaa new-model
+  R1(config)# aaa authentication login Keith-List-1 local
+  R1(config)# line vty 0 4
+  R1(config-line)# login authentication Keith-List-1
+  R1# ssh -l Keith 10.1.0.1 (testing)
+  R1>show ssh (to verify the current SSH session(s))
 
+HTTPS (config)
+  R1(config)# ip http secure-server
+  R1(config)# ip http authentication local 
+                                      or aaa or enable (enable password)
 
+AAA
+  Identity Services Engine (ISE) is an identity and access control policy platform that can validate that a computer meets the requirements of a company’s policy related to virus definition files, service pack levels, and so on before allowing the device on the network.
 
+Layer 2 Best Practices
+  - Select an unused VLAN (other than VLAN 1) and use that for the native VLAN for all your trunks.
+  - Avoid using VLAN 1 anywhere, because it is a default.
+  - Administratively configure access ports as access ports so that users cannot negotiate a trunk and disable the negotiation of trunking (no Dynamic Trunking Protocol [DTP]).
+  - Limit the number of MAC addresses learned on a given port with the port security feature.
+  - Control spanning tree to stop users or unknown devices from manipulating spanning tree. You can do so by using the BPDU guard and root guard features.
+  - Turn off Cisco Discovery Protocol (CDP) on ports facing untrusted or unknown networks that do not require CDP for anything positive. (CDP operates at Layer 2 and may provide attackers information we would rather not disclose.)
+  - On a new switch, shut down all ports and assign them to a VLAN that is not used for anything else other than a parking lot. Then bring up the ports and assign correct VLANs as the ports are allocated and needed.
 
+  configuration:
+    SW2(config)# int fa0/2
+    SW2(config-if)# switchport mode access
+    SW2(config-if)# switchport access VLAN 10
+    SW2(config-if)# switchport nonegotiate (This command disables DTP, which otherwise is still on by default, even for an interface configured as an access port.)
+    SW2(config-if)# int fa 0/23
+    SW2(config-if)# switchport trunk encapsulation dot1q 
+    SW2(config-if)# switchport mode trunk
+    SW2(config-if)# switchport trunk native vlan 3
+    SW2(config-if)# switchport nonegotiate
 
+  Tool description:
+    Port security - Limits the number of MAC addresses to be learned on an access switch port.
+      SW2(config-if)# int fa 0/2     
+      SW2(config-if)# switchport port-security
+      SW2(config-if)# switchport port-security maximum 5 (Set the maximum to desired number. Default is 1)
+      SW2(config-if)# switchport port-security violation protect
+      SW2(config-if)# switchport port-security mac-address sticky
+    BPDU guard - If BPDUs show up where they should not, the switch protects itself.
+      SW2(config-if)# int fa 0/2
+      SW2(config-if)# spanning-tree bpduguard enable
+      SW2(config)# errdisable recovery cause bpduguard (Automatically Restore Err-Disabled Ports)
+      SW2(config)# errdisable recovery interval 30 (err-disabled ports will be brought back up after 30 seconds of no bpdu violations)
+    Root guard - Control which ports are not allowed to become root ports to remote root switches.
+      SW1(config)# int fa 0/24
+      SW1(config-if)# spanning-tree guard root (This will also help in preventing tampering of your existing STP topology.)
+    Dynamic ARP inspection(DAI) - Prevents spoofing of Layer 2 information by hosts.
+    IP source guard - Prevents spoofing of Layer 3 information by hosts.
+    802.1x - Authenticates users before allowing their data frames into the network.
+    DHCP snooping - Prevents rogue DHCP servers from impacting the network.
+    Storm control - Limits the amount of broadcast or multicast traffic flowing through the switch.
+    Access control list - Traffic control to enforce policy.
 
+  CAM table overflow attack - malicious applications that sending thousands of frames into the network, with a different bogus MAC address for each frame, as the user tries to exhaust the limits of the dynamic MAC address table on the switch, which might cause the switch to forward all frames to all ports within a VLAN so that the attacker can begin to sniff all packets
+
+IPV6
+  Length: IPv6 addresses are 128 bits long.
+  Groupings: IPv6 addresses are segmented into eight groups of four hex characters.
+  Separation of groups: Each group is separated by a colon (:).
+  Length of mask: Usually 50 percent (64 bits long) for network ID, which leaves 50 percent (also 64 bits) for interface ID (using a 64-bit mask).
+  Number of networks: The network part is allocated by Internet registries 2^64 (1.8 x 1019)
+
+  TYPES:
+    Link local address: These always begin with the characters FE80. The last 64 bits are the host ID (also referred to as the interface ID), and the device uses the modified EUI-64 format (by default) to create that. The modified EUI-64 uses the MAC address (if on Ethernet; and if not on Ethernet, it borrows the MAC address of another interface), and realizes it is only 48 bits. To get to 64 bits for the host ID, it inserts four hexadecimal characters of FFFE, (which is the 16 more bits we need) and injects those into the middle of the existing MAC address to use as the 64-bit host ID. It also looks at the seventh bit from the left (of the original MAC address) and inverts it. If it is a 0 in the MAC address, it is a 1 in the host ID and vice versa. 
+
+    Loopback address: The address is ::1 (which is 127 0s followed by a 1).
+
+    All-nodes multicast address: In IPv6, multicasts begin with FFxx: (where the x = some other hex number). 02 happens to designate a multicast address that is link local in scope. There are other preset scopes, but you do not have to worry about them here. The IPv6 multicast group that all IPv6 devices join is FF02::1. If any device needs to send a packet/frame to all other local IPv6 devices, it can send the packet to the multicast address of FF02::1, which translates to a specific multicast Layer 2 address, and then all the devices that receive those frames continue to de-encapsulate those frames. If a device receives a frame, and the receiving device determines that the Layer 2 destination in the frame is not destined for itself and not destined for any multicast groups that the local device has joined, it discards the frame, instead of continuing to de-encapsulate it to find out what is inside (in the upper layers).
+
+    All-routers multicast address: In addition to the group address of FF02::1 that is joined by all devices configured for IPv6, routers that have had routing enabled for IPv6 also join the group FF02::2. By doing so, any client looking for a router can send a request to this group address and get a response if there is a router on the local network. You might have noticed a pattern here: FF02 is just like 224.0.0.x in IPv4 multicast. 224.0.0.1 = all devices. 224.0.0.2 = all routers.
+
+    Unicast and anycast addresses (configured automatically or manually): A global IPv6 address, unlike a link local address, is routable and can be reached through one or more routers that are running IP routing and that have a correct routing table. Global IPv6 unicast addresses have the first four characters in the range of 2000 to 3FFF, and may be manually configured, automatically discovered by issuing a router solicitation request to a local router, or be learned via IPv6 Dynamic Host Configuration Protocol (DHCP). An anycast address can be a route or an IP address that appears more than one time in a network, and then it is up to the network to decide the best way to reach that IP. Usually, two DNS servers, if they both use the same anycast address, are functional to the users, so that regardless of which DNS server that packets are forwarded to, the client gets the DNS response it needs.
+
+    Solicited-node multicast address for each of its unicast and anycast addresses: When a device has global and link local addresses, it joins a multicast group of FF02::1:FFxx:xxxx The x characters represent the last 24 bits of the host ID being used for the addresses. If a device needs to learn the Layer 2 address of a peer on the same network, it can send out a neighbor solicitation (request) to the multicast group that the device that has that address should have joined. This is the way IPv6 avoids using broadcasts.
+
+    Multicast addresses of all other groups to which the host belongs: If a router has enabled IPv6 routing, it joins the FF02::2 group (all routers), as mentioned earlier. If a router is running RIPng (the IPv6 flavor), it joins the multicast group for RIPng, which is FF02::9, so that it will process updates sent to that group from other RIP routers. Notice again some similarities. RIPv2 in IPv4 uses 224.0.0.9 as the multicast address!
+
+  Enabling IPv6 Routing and Routing Protocols(conf)
+    R1(config)# ipv6 unicast-routing
+    R1(config)# int fa 0/1
+    R1(config-if)# ipv6 rip MYRIP enable (RIPng)
+    R1(config-if)# ipv6 ospf 1 area 0 (OSPFv3)
+    R1(config-if)# ipv6 eigrp 1(EIGRP) 
+    R1(config-if)# exit
+
+    EIGRP only:
+    R1(config)# ipv6 router eigrp 1
+    R1(config-rtr)# no shutdown (Bringing the EIGRP routing process out of its default shutdown state)
+
+    Verification:
+    R1# show ipv6 protocol
+    R1# show ipv6 route (outputs the IPv6 routes the router knows how to reach)
+
+  Best Practices Common to Both IPv4 and IPv6:
+    Physical security: Keep the room where the router is housed free (safe) from electrostatic and magnetic interference. 
+
+    Device hardening: Disable services that are not in use and features and interfaces that are not in use.
+
+    Control access between zones: Enforce a security policy that clearly identifies which packets are allowed between networks.
+
+    Routing protocol security: Use authentication with routing protocols to help stop rogue devices from abusing the information being used in routing updates by your routers.
+
+    Authentication, authorization, and accounting (AAA): Require AAA so that you know exactly who is accessing your systems, when they are accessing your systems, and what they are doing. 
+
+    Mitigating DoS attacks: Denial of service refers to willful attempts to disrupt legitimate users from getting access to the resources they intend to. Although no complete solution exists, administrators can do specific things to protect the network from a DoS attack and to lessen its effects and prevent a would-be attacker from using a system as a source of an attack directed at other systems. These mitigation techniques include filtering based on bogus source IP addresses trying to come into the networks and vice versa. Unicast reverse path verification is one way to assist with this, as are access lists. Unicast reverse path verification looks at the source IP address as it comes into an interface, and then looks at the routing table. If the source address seen would not be reachable out of the same interface it is coming in on, the packet is considered bad and is dropped. Another technique to mitigate wellknown DoS attacks is some type of TCP Intercept, which can mitigate SYN-flood attacks.
+
+    Have and update a security policy: A security policy should be referenced and possibly updated whenever major changes occur to the administrative practices, procedures, or staff. If new technologies are implemented, such as a new VPN or a new application that is using unique protocols or different protocols than your current security policy allows, this is another reason to revisit the security policy. Another time a security policy might need to be updated is after a significant attack or compromise to the network has been discovered.
+
+  Threats Common to Both IPv4 and IPv6:
+    Application layer attacks: An attacker is using a network service in an unexpected or malicious way. 
+
+    Unauthorized access: Individuals not authorized for access are gaining access to network resources.
+
+    Man-in-the-middle attacks: Someone or something is between the two devices who believe they are communicating directly with each other. 
+
+    Sniffing or eavesdropping: An attacker is listening in on the network traffic of others.
+
+    Denial-of-service (DoS) attacks: Making services that should be available unavailable to the users who should normally have the access/service.
+
+    Spoofed packets: Forged addressing or packet content. 
+
+    Attacks against routers and other network devices: Turning off unneeded services and hardening the routers, similar to what the CCP security audit can do, will help the router be less susceptible to attacks against the router itself.
+
+  New Potential Risks with IPv6:
+    Network Discovery Protocol: Clients discover routers using NDP, and if a rogue router is present, it could pretend to be a legitimate router and send incorrect information to the clients about the network, the default gateway, and other parameters.
+
+    DHCPv6: A rogue router that has fooled a client about being a router could also manipulate the client into using incorrect DHCP-learned information.
+
+    Hop-by-hop extension headers: With IPv4, there were IP options that could be included in IP headers. Malicious use of these headers could cause excessive CPU utilization on the routers that receive or forward these packets, in addition to dictating the path the packet should take through the network.
+
+    Packet amplification attacks: Using multicast addresses rather than IPv4 broadcast addresses could allow an attacker to trick an entire network into responding to a request. 
+
+    ICMPv6: This protocol is used extensively by IPv6 as its NDP. Much potential harm may result from manipulation of this protocol by an attacker.
+
+    Tunneling options: Tunneling IPv6 through IPv4 parts of a network may mean that the details inside the IPv6 packet might not be inspected or filtered by the IPv4 network. 
+
+    Autoconfiguration: Because an IPv6 host can automatically configure an IP address for itself, any trickery by a rogue router could also cause the host’s autoconfigura- tion to be done incorrectly, which could cause a failure on the network or a man-in- the-middle attack as the client tries to route all traffic through the rogue router.
+
+    Dual stacks: If a device is running both IPv4 and IPv6 at the same time, but is aware of only one (or is primarily only using one), the other protocol stack if not secured is a potential way that an attacker could remotely access the device. 
+
+    Bugs in code: Any newer software has the potential to have bugs, including the software that is supporting the IPv6 features in the network or end-station devices.
+
+  IPv6 Best Practices
+    Filter bogus addresses: Drop, at the end of your network, any addresses that should never be valid source or destination addresses(bogon address).
+
+    Filter non-local multicast addresses: If you are not running multicast applica- tions, you should never need multicast to be forwarded beyond a specific VLAN.
+
+    Filter ICMPv6 traffic that is not needed on your specific networks: Normal NDP uses ICMPv6 as its core protocol. A path’s maximum transmission unit (MTU) is also determined by using ICMP. Outside of its normal functionality, you want to filter the unused parts of ICMP so that an attacker cannot use it against your network.
+
+    Drop routing header type 0 packets: Routing header 0, also known as RH0, may contain many intermediate next hops, and if followed an attacker could control the path of a packet through a network. 
+
+    Use manual tunnels rather than automatic tunnels: If tunneling, do not use automatic tunnel mechanisms such as automatic 6to4, because you cannot control all of them. (They are dynamic.) With the manual tunnels, avoid allowing the tunnels to go through the perimeter of your network, as you will not have tight controls on the contents of the tunneled packets.
+
+    Protect against rogue IPv6 devices: Secure Neighbor Discovery (SEND) and router advertisement guard (RA guard) can help in mitigating rogue routers.
+
+  NA IPv6 neighbor advertisement. Used to communicate information from an IPv6 host to another on the same locally connected network.
+  NS IPv6 neighbor solicitation. Used by an IPv6 speaker to make a request of one or more local IPv6 devices on the same network.
+  RS IPv6 router solicitation request. Used by an IPv6 device to obtain information from an IPv6 router on the local network.
+
+Threat Control and Mitigation Strategy Components
+  Formal process for policy creation, implementation, and review - Senior management, ultimately, is responsible for policy. The job of the network administrator is to implement and enforce through technical and logical controls the policy that has been mandated. When there are changes to be made, a formal procedure, including change control and a written signoff by the person authorized for that change, should be in place. The documented history of change control should be kept. Auditing records detailing which administrators have accessed which systems, along with any changes that were made, should be kept and stored. This can be automated through services such as authentication, authorization, and accounting (AAA).
+
+  Mitigation policies and techniques - A policy should be in place specifying the course of action in response to an attack or threat. Ideally, an automated system could retaliate against the attacker’s packets or activities to stop the attack and quarantine the area if possible. Reporting features should be such that the highest-ranking threats can be easily seen and addressed by both systems and administrators. An example of an automated response to an attacker may be a system that dynamically sends out blocking requests to perimeter routers that deny future packets from the attacker, or perhaps sending a TCP reset to the attacker and the proposed victim. A feature such as this could be implemented on an intrusion prevention system (IPS).
+
+  End-user education and awareness - Because of smart phones, virtual private networks (VPN), and almost instant access everywhere, data is available at lots of different places. Having an end-user policy, educating the end users, and periodically reviewing and verifying that the end users are aware of their role in protecting the data is a critical piece in mitigating threats. An ounce of prevention here is worth a pound of forensics later if a compromise has occurred.
+
+  Defense in depth - Defense in depth refers to a layered security approach, where multiple devices may have overlapping security responsibilities. This is desired so that a single failure of a given system does not represent a significant vulnerability of the entire network.
+
+  Centralized monitoring and analysis - Ideally, with multiple devices providing security, you would have centralized monitoring where all the information can be easily sorted and viewed. This information coming in from all these devices should be correlated (which should be an automated process), for an enterprise-wide view of what is really happening. After seeing that an attack is taking place, a centralized tool may have the ability to recommend or even implement an appropriate countermeasure against the attack. (An example is to re-write an access control list [ACL] and apply it on a router that is in the path of the attacker.) External information from global correlation systems could also be used to harden the network against a global threat that may be headed in the direction of the current network.
+
+  Application layer visibility - Well-known protocols, in the hands of an attacker, could be manipulated to cause harm to your network in the form of an attack. Application layer visibility is critical to verify whether protocol abuse is occurring (such as malformed requests, tunneling, and so on) so that the network can respond if needed and prevent the malicious traffic or application from proceeding further.
+
+  Incident response - The policy should state what will happen and how it will happen as incidents occur on a network. Having a formal policy for this removes the ambiguity of how incidents are reported and the follow-up process documented after the event. The response may be administrative (manual) and automated.
+
+NAT
+  Inside local - The real IP configured on an inside host, such as PC1.
+
+  Inside global - The mapped/global address that the router is swapping out for the inside host during NAT. The outside world sees PC1 coming from this mapped/global address
+
+  Outside local - If performing NAT on outside devices (outside NAT), this is the mapped address of the outside device (such as Server A) as it would appear to inside hosts. If not doing outside NAT on the router, this appears as the normal outside device’s IP address to the inside devices.
+
+  Outside global - The real IP configured on an outside host, such as the IP on Server A.
+
+NAT options
+  Static NAT - This is a one-to-one permanent mapping.
+
+  Dynamic NAT - Dynamic NAT involves having a pool of global addresses, and only mapping those global addresses to inside devices when those inside devices have and need to go out to the Internet.
+
+  Dynamic PAT (NAT with overload) - It combines the benefits of dynamically assigning global addresses only when needed, and it uses overload so that literally thousands of inside devices can be translated to the same global IP address.
+
+  Policy NAT/PAT - Policy-based NAT is based on a set of rules, such as what is the source IP address, what is the destination IP address, and which ports are used that would qualify that packet to have NAT/PAT applied to it.
+
+Firewall Design Considerations:
+  Firewalls should be placed at security boundaries, such as between two networks that have different levels of trust (from the perspective of your organization). An Key￼example is your internal network compared to the Internet.
+
+  Firewalls should be a primary security device, but not the only security device or security measure on the network.
+
+  A policy that starts with a “deny all” attitude and then specifically only permits traf- fic that is required is a better security posture than a default “permit all” attitude first and then denying traffic specifically not wanted.
+
+  Leverage the firewall feature that best suits the need.
+
+  Make sure that physical security controls and management access to the firewall devices, and the infrastructure that supports them such as cables and switches, are secure.
+
+  Have a regularly structured review process looking at the firewall logs.
+
+  Practice change management for any configuration modification on the firewalls.
+
+Firewall access rules:
+  Rules based on service control - These rules are based on the types of services that may be accessed through the firewall, inbound or outbound.
+
+  Rules based on address control - These rules are based on the source/destination addresses involved, usually with a permit or deny based on specific entries in an access control list.
+
+  Rules based on direction control - These rules specify where the initial traffic can flow. 
+
+  Rules based on user control - These rules control access based on knowing who the user is and what that user is authorized to do. This can be implemented via AAA services.
+
+  Rules based on behavior control - These rules control how a particular service is used. For example, a firewall may implement an email filter to protect against spam.
+
+Rule Implementation Consistency:
+  - Rules that are too promiscuous: These types of rules allow more access than is necessary for the business requirement.
+  - Redundant rules
+  - Shadowed rules: A shadowed rule is basically incorrect order placement in the access list.
+  - Orphaned rules: This most likely results from a configuration error that is referencing incorrect IPs that would never be seen by the firewall. 
+  - Incorrectly planned rules: This may result from an error that is made as the business requirements are being translated to the technical and logical controls that the firewall will implement.
+  - Incorrectly implemented rules: This results from an administrator implementing the incorrect port, protocol, or IP information on the firewall.
+
+ZBF features:
+  Stateful inspection
+  - Application inspection
+  - Packet filtering
+  - URL filtering
+  - Transparent firewall (implementation method)
+  - Support for virtual routing and forwarding (VRF)
+  - Access control lists (ACL) are not required as a filtering method to implement the policy
+
+  Cisco Common Classification Policy Language (C3PL):
+    - Class maps: These are used to identify traffic, such as traffic that should be inspected. 
+
+    - Policy maps: These are the actions that should be taken on the traffic.
+      Inspect = Permit and statefully inspect the traffic
+      Pass = Permits/allows the traffic but does not create an entry in the stateful database
+      Drop = Deny the packet
+      Log = Log the packets
+
+    - Service policies: This is where you apply the policies, identified from a policy map, to a zone pair. This step actually implements the policy.
+
+ZBF(config)
+  R3(config)# class-map type inspect match-any MY-CLASS-MAP (The class map "classifies" or "identifies" the traffic) 
+  R3(config-cmap)# match protocol telnet
+  R3(config-cmap)# match protocol icmp
+  R3(config-cmap)# exit
+  R3(config)# policy-map type inspect MY-POLICY-MAP (The policy map calls on a specific class map that it wants to use)
+  R3(config-pmap)# class type inspect MY-CLASS-MAP
+  R3(config-pmap-c)# inspect
+  R3(config-pmap-c)# exit
+  R3(config-pmap)# exit
+  R3(config)# zone security inside (create the security zones)
+  R3(config-sec-zone)# exit
+  R3(config)# zone security outside 
+  R3(config-sec-zone)# exit
+  R3(config-sec-zone)# zone-pair security in-to-out source inside destination outside (Create the zone-pair, specifying the zones and the direction (from where to where))
+  R3(config-sec-zone-pair)# service-policy type inspect MY-POLICY-MAP (Use the service-policy command in zone-pair configuration mode to apply the policy map)
+  R3(config-sec-zone-pair)# exit
+  R3(config)# interface GigabitEthernet3/0 (Configure the interfaces, so they become members of the respective zones)
+  R3(config-if)# description Belongs to outside zone
+  R3(config-if)# zone-member security outside
+  R3(config-if)# exit
+  R3(config)# interface GigabitEthernet1/0 
+  R3(config-if)# description Belongs to inside zone 
+  R3(config-if)# zone-member security inside 
+  R3(config-if)# exit
+
+  Verifying
+  R3# show class-map type inspect
+  R3# show policy-map type inspect zone-pair ccp-zp-in-out sessions
+
+  NAT(config)
+  R3(config)# access-list 2 permit 10.0.0.0 0.0.0.255 (identify the packets)
+  R3(config)# interface GigabitEthernet3/0
+  R3(config-if)# ip nat outside
+  R3(config-if)# exit
+  R3(config)# interface GigabitEthernet1/0
+  R3(config-if)# ip nat inside
+  R3(config-if)# exit
+  R3(config)# ip nat inside source list 2 interface GigabitEthernet3/0 overload (overload keyword indicates PAT)
+  R3# show ip nat translations
+  R3# show ip nat translations * (Show current active address translations occurring on the router)
+
+ASA Features and Services
+  Packet filtering: Simple packet filtering normally represents an access list.
+
+  Stateful filtering: By default, the ASA enters stateful tracking information about packets that have been initially allowed through the firewall.
+
+  Application inspection/awareness: The ASA can listen in on conversations between devices on one side and devices on the other side of the firewall. 
+
+  Network Address Translation (NAT): It supports inside and outside NAT, and both static and dynamic NAT and PAT, including Policy NAT, which is only triggered based on specific matches of IP addresses or ports. 
+
+  DHCP: The ASA can act as a Dynamic Host Configuration Protocol (DHCP) server or client or both. 
+
+  Routing: The ASA supports most of the interior gateway routing protocols, includ- ing RIP, EIGRP, and OSPF.
+
+  Layer 3 or Layer 2 implementation: The ASA can be implemented as a tradi- tional Layer 3 firewall, which has IP addresses assigned to each of its routable interfaces.
+
+  VPN support: The ASA can operate as either the head-end or remote-end device for VPN tunnels. When using IPsec, the ASA can support remote-access VPN users and site-to-site VPN tunnels.
+
+  Object groups: An object group is a configuration item on the ASA that refers to one or more items.
+
+  Botnet traffic filtering: The ASA works with an external system at Cisco that provides information about the Botnet Traffic Filter Database and so can protect against this.
+
+  High availability: By using two firewalls in a high-availability failover combination, you can implement protection against a single system failure.
+
+  AAA support
+
+  ASA(Config)
+    (config)# configure terminal
+    (config)# interface Vlan1
+    (config-if)# no shutdown
+    (config-if)# description Connect to the dmz
+    (config-if)# nameif dmz
+    (config-if)# security-level 50
+    (config-if)# ip address 192.168.1.254 255.255.255.0 
+    (config-if)# exit
+    (config)# interface Vlan2
+    (config-if)# no shutdown
+    (config-if)# description Connects to my private network 
+    (config-if)# nameif inside
+    (config-if)# security-level 100 
+    (config-if)# ip address 10.0.0.1 255.255.255.0 
+    (config-if)# exit
+    (config)# interface Vlan4 
+    (config-if)# no shutdown 
+    (config-if)# description Connects to the Internet 
+    (config-if)# no forward interface Vlan2 
+    (config-if)# nameif outside 
+    (config-if)# security-level 0 
+    (config-if)# ip address 23.1.2.3 255.255.255.240 
+    (config-if)# exit
+    (config)# interface Ethernet0/1
+    (config-if)# switchport access vlan 4 
+    (config-if)# exit
+    (config)#
+    (config)# interface Ethernet0/2
+    (config-if)# switchport access vlan 2 
+    (config-if)# exit
+    (config)#
+    (config)# interface Ethernet0/3
+    (config-if)# switchport access vlan 2 
+    (config-if)# exit
+    (config)#
+    (config)# interface Ethernet0/4
+    (config-if)# switchport access vlan 2
+    (config-if)# exit 
+    (config)#
+    (config)# interface Ethernet0/5 
+    (config-if)# switchport access vlan 2 
+    (config-if)# exit 
+    (config)#
+    (config)# interface Ethernet0/6 
+    (config-if)# switchport access vlan 2 
+    (config-if)# exit 
+    (config)#
+    (config)# interface Ethernet0/7 
+    (config-if)# switchport access vlan 2 
+    (config-if)# exit
+
+    DCHP configuration in ASA
+    (config)# dhcpd address 10.0.0.101-10.0.0.132 inside 
+    (config)# dhcpd enable inside
+    (config)# dhcpd dns 8.8.8.8 interface inside 
+    (config)# dhcpd domain iins.com interface inside
+
+    Static route in ASA
+    (config)# route outside 0.0.0.0 0.0.0.0 23.1.2.7
+
+    PAT with ASA
+    (config)# object network Inside_Hosts 
+    (config-network-object)# subnet 10.0.0.0 255.255.255.0 
+    (config-network-object)# description Inside_Hosts 
+    (config-network-object)# exit
+    (config)# nat (inside,outside) 1 source dynamic Inside_Hosts interface
+
+    ACL with ASA
+    (config)# access-list inside_access_in deny tcp any any eq telnet 
+    (config)# access-list inside_access_in permit ip any any 
+    (config)# access-group inside_access_in in interface inside
+
+IPS/IDS
+  Positive/Negative
+    False positive: is when the sensor generates an alert about traffic and that traffic is not malicious or important as related to the safety of the network.
+
+    False negative: is when there is malicious traffic on the network, and for whatever reason the IPS/IDS did not trigger an alert
+
+    True positive: means that there was malicious traffic and that the sensor saw it and reported on it.
+
+    True negative: is also a wonderful thing in that there was normal non-malicious traffic, and the sensor did not generate any type of alert, which is normal sensor behavior regad- ing non-malicious traffic.
+
+  Identifying Malicious Traffic:
+    Signature-Based IPS/ID: is just a set of rules looking for some specific pattern or characteristic in either a single packet or a stream of packets.
+      atomic - Signatures that can match on a single packet, as compared to a string of packets
+      Service - Signatures that examine application layer services, regardless of the operating system
+      String or Multistring - Supports flexible pattern matching, and can be identified in a single packet or group of packets, such as a session
+      Other - Miscellaneous signatures that may not specifically fit into other categories
+      
+    Policy-Based IPS/IDS: implemented based on the policy for your network.
+
+    Anomaly-Based IPS/IDS: is used to identify worms that may be propagating through the network.
+
+    Reputation-Based IPS/IDS: collects input from systems all over the planet that are participating in global correlation; so what other sensors have learned collectively, your local sensor can use locally.
+
+  Risk Rating (RR) Calculation Factors:
+    Target value rating (TVR): The value that you as an administrator have assigned to specific destination IP addresses or subnets where the critical servers/ devices live.
+
+    Signature fidelity rating (SFR): The accuracy of the signature as determined by the person who created that signature.
+
+    Attack severity rating (ASR): How critical the attack is as determined by the person who created that signature.
+
+    Attack relevancy (AR): This is a minor contributor to the risk rating. A signature match that is destined to a host where the attack is relevant, such as a Windows server-based attack, which is going to the destination address of a known Windows server, is considered a relevant attack, and the risk rating increases slightly as a result.
+
+    Global correlation: If the sensor is participating in global correlation and receives information about specific source addresses that are being used to implement large-scale attacks, attacks coming from the source IP addresses are also given a slightly increased risk rating value.
+
+IPS
+    - profile based
+    - signature based
+    - protocol analysis based
+
+  Actions That May Be Taken:
+    - Deny attacker inline
+    - Deny connection inline
+    - Deny packet inline
+    - Produce alert (the default action for most signatures)
+    - Reset TCP connection (effective only against TCP-based attacks)
+
+VPNs Tecnologies:
+  IPsec: Implements security of IP packets at Layer 3 of the OSI model, and can be used for site-to-site VPNs and remote-access VPNs.
+  SSL: Secure Sockets Layer implements security of TCP sessions at Layer 4 of the OSI model, and can be used for remote-access VPNs (as well as being used to securely visit a web server that supports it via HTTPS).
+Key Topic
+  MPLS: Multiprotocol Label Switching and MPLS Layer 3 VPNs are provided by a service provider to allow a company with two or more sites to have logical connec- tivity between the sites using the service provider network for transport.
+
+Types of VPNs:
+  - Remote-access VPNs: Some users might need to build a VPN connection from their individual computer to the corporate headquarters (or to the destination they want to connect to).
+
+  - Site-to-site VPNs: The other main VPN implementation is by companies that may have two or more sites that they want to connect securely together (likely using the Internet) so that each site can communicate with the other site or sites.
+
+Benefits of VPNs
+  - Confidentiality
+  - Data integrity
+  - Authentication
+  - Antireplay
+
+Certificate relevant parts:
+  - Serial number: Issued and tracked by the CA that issued the certificate.
+  - Issuer: The CA that issued this certificate (Even root certificates need to have their certificates issued from someone (perhaps even themselves).
+  - Validity dates: The time window during which the certificate may be considered valid. If a local computer believes the date to be off by a few years, that same PC may consider the certificate invalid due to his own error about the time. Using Network Time Protocol (NTP) is a good idea to avoid this problem.
+  - Subject of the certificate: This includes the Organizational Unit (OU), Organization (O), Country (C), and other details commonly found in an X.500 structured directory (more on that later in the chapter). The subject of the root certificate is the CA itself. The subject for a client’s identity certificate is the client.
+  - Public key: The contents of the public key and the length of the key are often both shown. After all, the public key is public.
+  - Thumbprint algorithm and thumbprint: This is the hash for the certificate. On a new root certificate, you could use a phone to call and ask for the hash value and compare it to the hash value you see on the certificate. If it matches, you have just performed out-of-band (using the telephone) verification of the digital certificate.
+
+  Contents of a Digital Certificate:
+    - Serial number: Assigned by the CA and used to uniquely identify the certificate
+    - Subject: The person or entity that is being identified
+    - Signature algorithm: The specific algorithm that was used for signing the digital certificate
+    - Signature: The digital signature from the certificate authority, which is used by devices that want to verify the authenticity of the certificate issued by that CA
+    - Issuer: The entity or CA that created and issued the digital certificate
+    - Valid from: The date the certificate became valid
+    - Valid to: The expiration date of the certificate
+    - Key usage: The functions for which the public key in the certificate may be used
+    - Public key: The public portion of the public and private key pair generated by the host whose certificate is being looked at
+    - Thumbprint algorithm: The hash algorithm used for data integrity
+    - Thumbprint: The actual hash
+    - Certificate revocation list location: The URL that can be checked to see whether the serial number of any certificates issued by the CA have been revoked
+
+  Public Key Cryptography Standards:
+    - PKCS #10: This is a format of a certificate request sent to a CA who wants to receive their identity certificate. This type of request would include the public key for the entity desiring a certificate.
+    - PKCS #7: This is a format that can be used by a CA as a response to a PKCS#10 request. The response itself will very likely be the identity certificate (or certificates) that had been previously requested.
+    - PKCS#1: RSA Cryptography Standard.
+    - PKCS#12: A format for storing both public and private keys using a symmetric password-based key to “unlock” the data whenever the key needs to be used or accessed.
+    - PKCS#3: Diffie-Hellman key exchange.
+
+  Revoked Certificates
+    - Certificate Revocation List (CRL): This is a list of certificates, based on their serial numbers, that had initially been issued by a CA but have since been revoked and as a result should not be trusted. A CRL could be very large, and the client would have to process the entire list to verify the certificate is not on the list. A CRL can be thought of as the naughty list. This is the primary protocol used for this purpose, compared to OSCP and AAA. A CRL could be accessed by several protocols, including LDAP and HTTP. A CRL could also be obtained via SCEP.
+    - Online Certificate Status Protocol (OSCP): This is an alternative to CRLs. Using this method, a client simply sends a request to find the status of a certificate and gets a response without having to know the complete list of revoked certificates.
+    - Authentication, authorization, and accounting (AAA): Cisco AAA services also provide support for validating digital certificates, including a check to see whether a certificate has been revoked. Because this is a proprietary solution, this is not often used in PKI.
+
+  PKI Components:
+    RSA digital signatures - Using its private key to encrypt a generated hash, a digital signature is created. The receiver uses the public key of the sender to validate the digital signature and verify the identity of the peer.
+
+    Digital certificate - File that contains the public key of the entity, a serial number, and the signature of the CA that issued the certificate
+
+    Public and private keys - Used as a pair to encrypt and decrypt data in an asymmetrical fashion.
+
+    Certificate authority - The CA’s job is to fulfill certificate requests and generate the digital certificates for its clients to use. It also maintains a list of valid certificates that have been issued, and maintains a CRL listing any revoked certificates.
+
+    X.509v3 - A common certificate format used today.
+
+    Subordinate CA/ RA - Assistant to the CA, which can issue certificates to clients. Clients need both the certificates from the root and the subordinate to verify signatures all the way to the root. Used in a hierarchal PKI topology.
+
+    PKCS - Public Key Cryptography Standards, agreed to and implemented by vendors who want the ability to have compatibility with other devices in the PKI.
+
+  IKE Phase 1
+    H: Hash
+    A: Authentication method
+    G: DH group (a stretch, but it works)
+    L: Lifetime of the IKE Phase 1 tunnel
+    E: Encryption algorithm to use for the IKE Phase 1 tunnel
 
 
 
